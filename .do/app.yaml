@@ -6,3 +6,4 @@ services:
     deploy_on_push: true
     repo: ant1441/do-app-rust-q-and-a
   name: q-and-a
+  protocol: HTTP2
