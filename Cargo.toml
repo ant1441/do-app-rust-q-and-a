@@ -5,4 +5,6 @@ edition = "2024"
 
 [dependencies]
 rocket = { version = "0.5.1", features = ["secrets"] }
+rocket_db_pools = { version = "0.2.0", features = ["diesel_postgres", "sqlx_postgres", "sqlx_sqlite"] }
 rocket_prometheus = "0.10.1"
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "migrate"] }

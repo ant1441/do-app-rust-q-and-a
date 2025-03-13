@@ -7,3 +7,7 @@ services:
     repo: ant1441/do-app-rust-q-and-a
   name: q-and-a
   protocol: HTTP2
+databases:
+  - name: q-and-a-db
+    engine: PG
+    production: false
