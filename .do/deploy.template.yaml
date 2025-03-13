@@ -1,8 +1,0 @@
-spec:
-  name: q-and-a
-  services:
-  - dockerfile_path: Dockerfile
-    git:
-      branch: main
-      repo_clone_url: https://github.com/ant1441/do-app-rust-q-and-a.git
-    name: q-and-a
