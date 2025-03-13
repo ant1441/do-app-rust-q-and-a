@@ -1,8 +1,8 @@
-name: sample-dockerfile
+name: q-and-a
 services:
 - dockerfile_path: Dockerfile
   github:
     branch: main
     deploy_on_push: true
-    repo: digitalocean/sample-dockerfile
-  name: sample-dockerfile
+    repo: ant1441/do-app-rust-q-and-a
+  name: q-and-a
