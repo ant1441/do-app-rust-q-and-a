@@ -1,3 +1,5 @@
+use rocket_prometheus::PrometheusMetrics;
+
 #[macro_use]
 extern crate rocket;
 
@@ -13,5 +15,9 @@ fn hello(name: &str) -> String {
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![index, hello])
+    let prometheus = PrometheusMetrics::new();
+    rocket::build()
+        .attach(prometheus.clone())
+        .mount("/", routes![index, hello])
+        .mount("/metrics", prometheus)
 }
