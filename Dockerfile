@@ -32,7 +32,8 @@ RUN apt-get update \
 
 ENV TZ=Etc/UTC \
     USER=appuser \
-    ROCKET_ADDRESS=::
+    ROCKET_ADDRESS=:: \
+    ROCKET_PORT=8080
 
 RUN groupadd ${USER} \
     && useradd -g ${USER} ${USER} && \
