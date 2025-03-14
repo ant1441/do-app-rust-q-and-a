@@ -2,3 +2,6 @@
 
 # Just used for dev
 Rocket.toml
+
+*.db
+.env
