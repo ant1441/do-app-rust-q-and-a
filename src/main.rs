@@ -13,6 +13,7 @@ use rocket_prometheus::PrometheusMetrics;
 
 mod auth;
 mod db;
+mod models;
 mod types;
 
 use db::Db;
@@ -55,11 +56,7 @@ async fn run_migrations(rocket: rocket::Rocket<rocket::Build>) -> rocket::fairin
 #[launch]
 fn rocket() -> _ {
     let url = env::var("PUBLIC_URL").unwrap_or("http://localhost:8000".to_string());
-    let database_url = if cfg!(debug_assertions) {
-        "".to_string()
-    } else {
-        env::var("DATABASE_URL").expect("Missing DATABASE_URL")
-    };
+    let database_url = env::var("DATABASE_URL").expect("Missing DATABASE_URL");
 
     let figment = rocket::Config::figment()
         .merge(("databases.q_and_a.url", database_url))

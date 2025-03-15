@@ -4,9 +4,14 @@ use rocket::{
     http::{Cookie, CookieJar, SameSite, Status},
     response::Redirect,
 };
+use rocket_db_pools::Connection;
 use rocket_oauth2::{OAuth2, TokenResponse};
 
-use crate::types::GitHubUser;
+use crate::{
+    Db,
+    models::{AuthType, User},
+    types::GitHubUser,
+};
 
 pub(crate) struct GitHub;
 
@@ -20,6 +25,7 @@ pub(crate) async fn github_callback(
     token: TokenResponse<GitHub>,
     cookies: &CookieJar<'_>,
     client: &State<reqwest::Client>,
+    db: Connection<Db>,
 ) -> Result<Redirect, Status> {
     let token = token.access_token().to_string();
     cookies.add_private(
@@ -45,10 +51,17 @@ pub(crate) async fn github_callback(
     }
     info!("Response from GitHub API {resp_status}");
 
-    println!("{resp:#?}");
-    let resp_body: GitHubUser = resp.json().await.unwrap();
+    let github_user: GitHubUser = resp.json().await.unwrap();
 
-    println!("{resp_body:#?}");
+    // Add user to DB
+    let user = User {
+        auth_type: AuthType::GitHub,
+        user_id: github_user.id,
+        name: github_user.name.unwrap_or("<GitHub User>".to_string()),
+        avatar_url: github_user.avatar_url,
+        gravatar_id: github_user.gravatar_id,
+    };
+    user.upsert(db).await;
 
     Ok(Redirect::to("/"))
 }
