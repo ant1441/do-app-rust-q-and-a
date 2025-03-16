@@ -31,8 +31,8 @@ WORKDIR /bin
 
 # Copy from builder and rename to 'server'
 COPY --from=builder /q-and-a/target/release/q-and-a ./server
-ENV STATIC_PATH /var/qanda/static
 COPY static /var/qanda/static
+COPY templates /var/qanda/templates
 
 RUN apt-get update \
     && apt-get install -y ca-certificates tzdata \
@@ -41,7 +41,9 @@ RUN apt-get update \
 ENV TZ=Etc/UTC \
     USER=appuser \
     ROCKET_ADDRESS=:: \
-    ROCKET_PORT=8080
+    ROCKET_PORT=8080 \
+    STATIC_PATH=/var/qanda/static \
+    ROCKET_TEMPLATE_DIR=/var/qanda/templates
 
 RUN groupadd ${USER} \
     && useradd -g ${USER} ${USER} && \
