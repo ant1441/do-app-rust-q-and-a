@@ -7,7 +7,7 @@ use std::{env, net::SocketAddr};
 use auth::GitHub;
 use models::User;
 use rocket::fs::FileServer;
-use rocket::http::{Cookie, CookieJar};
+use rocket::http::CookieJar;
 use rocket::request::{self, FromRequest};
 use rocket::{Request, fairing::AdHoc};
 use rocket_db_pools::{Database, sqlx};

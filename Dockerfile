@@ -3,10 +3,16 @@
 FROM rust:slim as builder
 
 RUN USER=root cargo new --bin q-and-a
+RUN apt-get update \
+    && apt-get install -y libssl-dev pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /q-and-a
 
+# Ensure SQLX uses the saved query metadata in .sqlx
+ENV SQLX_OFFLINE true
 COPY ./Cargo.toml ./Cargo.toml
+COPY ./Cargo.lock ./Cargo.lock
 RUN cargo build --release
 RUN rm src/*.rs
 
@@ -25,6 +31,7 @@ WORKDIR /bin
 
 # Copy from builder and rename to 'server'
 COPY --from=builder /q-and-a/target/release/q-and-a ./server
+COPY static .
 
 RUN apt-get update \
     && apt-get install -y ca-certificates tzdata \
