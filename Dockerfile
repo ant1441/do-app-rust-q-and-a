@@ -31,7 +31,8 @@ WORKDIR /bin
 
 # Copy from builder and rename to 'server'
 COPY --from=builder /q-and-a/target/release/q-and-a ./server
-COPY static .
+ENV STATIC_PATH /var/qanda/static
+COPY static /var/qanda/static
 
 RUN apt-get update \
     && apt-get install -y ca-certificates tzdata \

@@ -81,6 +81,7 @@ async fn run_migrations(rocket: rocket::Rocket<rocket::Build>) -> rocket::fairin
 fn rocket() -> _ {
     let url = env::var("PUBLIC_URL").unwrap_or("http://localhost:8000".to_string());
     let database_url = env::var("DATABASE_URL").expect("Missing DATABASE_URL");
+    let static_path = env::var("STATIC_PATH").unwrap_or("static".to_string());
 
     let figment = rocket::Config::figment()
         .merge(("databases.q_and_a.url", database_url))
@@ -114,6 +115,6 @@ fn rocket() -> _ {
             "/auth",
             routes![auth::login, auth::github_login, auth::github_callback],
         )
-        .mount("/static/", FileServer::from("static"))
+        .mount("/static/", FileServer::from(static_path))
         .mount("/metrics", prometheus)
 }
