@@ -5,9 +5,13 @@ use std::time::Duration;
 use std::{env, net::SocketAddr};
 
 use auth::GitHub;
+use models::User;
+use rocket::fs::FileServer;
+use rocket::http::{Cookie, CookieJar};
 use rocket::request::{self, FromRequest};
 use rocket::{Request, fairing::AdHoc};
 use rocket_db_pools::{Database, sqlx};
+use rocket_dyn_templates::{Template, context};
 use rocket_oauth2::OAuth2;
 use rocket_prometheus::PrometheusMetrics;
 
@@ -36,8 +40,28 @@ impl<'r> FromRequest<'r> for RequestSocketAddr {
 }
 
 #[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
+fn index(cookies: &CookieJar<'_>) -> Template {
+    for c in cookies.iter() {
+        let name = c.name();
+        println!("COOKIE: {name}");
+    }
+    let user = if let Some(cookie) = cookies.get_private("user") {
+        let cookie_value = cookie.value();
+        match serde_json::from_str::<User>(cookie_value) {
+            Ok(user) => Some(user),
+            Err(e) => {
+                warn!("Invalid 'user' cookie found: {e}");
+                cookies.remove_private("user");
+                None
+            }
+        }
+    } else {
+        warn!("No 'user' cookie found");
+        None
+    };
+
+    let is_auth = user.is_some();
+    Template::render("index", context! {is_auth: is_auth, user: user})
 }
 
 async fn run_migrations(rocket: rocket::Rocket<rocket::Build>) -> rocket::fairing::Result {
@@ -81,12 +105,15 @@ fn rocket() -> _ {
     rocket::custom(figment)
         .manage(client)
         .attach(prometheus.clone())
+        .attach(Template::fairing())
         .attach(Db::init())
         .attach(AdHoc::try_on_ignite("SQLx Migrations", run_migrations))
         .attach(OAuth2::<GitHub>::fairing("github"))
+        .mount("/", routes![index])
         .mount(
-            "/",
-            routes![index, auth::github_login, auth::github_callback],
+            "/auth",
+            routes![auth::login, auth::github_login, auth::github_callback],
         )
+        .mount("/static/", FileServer::from("static"))
         .mount("/metrics", prometheus)
 }

@@ -1,7 +1,7 @@
 use reqwest::{StatusCode, header};
 use rocket::{
     State,
-    http::{Cookie, CookieJar, SameSite, Status},
+    http::{CookieJar, Status},
     response::Redirect,
 };
 use rocket_db_pools::Connection;
@@ -13,27 +13,26 @@ use crate::{
     types::GitHubUser,
 };
 
-pub(crate) struct GitHub;
+pub struct GitHub;
+
+#[get("/login")]
+pub fn login() -> Redirect {
+    Redirect::to("/auth/login/github")
+}
 
 #[get("/login/github")]
-pub(crate) fn github_login(oauth2: OAuth2<GitHub>, cookies: &CookieJar<'_>) -> Redirect {
+pub fn github_login(oauth2: OAuth2<GitHub>, cookies: &CookieJar<'_>) -> Redirect {
     oauth2.get_redirect(cookies, &["user:read"]).unwrap()
 }
 
-#[get("/auth/github")]
-pub(crate) async fn github_callback(
+#[get("/github")]
+pub async fn github_callback(
     token: TokenResponse<GitHub>,
     cookies: &CookieJar<'_>,
     client: &State<reqwest::Client>,
     db: Connection<Db>,
 ) -> Result<Redirect, Status> {
     let token = token.access_token().to_string();
-    cookies.add_private(
-        Cookie::build(("token", token.clone()))
-            .same_site(SameSite::Strict)
-            .build(),
-    );
-
     let resp = client
         // https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-the-authenticated-user
         .get("https://api.github.com/user")
@@ -62,6 +61,7 @@ pub(crate) async fn github_callback(
         gravatar_id: github_user.gravatar_id,
     };
     user.upsert(db).await;
+    cookies.add_private(user);
 
     Ok(Redirect::to("/"))
 }

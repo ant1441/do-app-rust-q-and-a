@@ -1,21 +1,37 @@
+use rocket::{
+    http::{Cookie, SameSite},
+    time::{Duration, OffsetDateTime},
+};
 use rocket_db_pools::Connection;
+use serde::{Deserialize, Serialize};
 use sqlx::{postgres::PgQueryResult, query};
 
 use crate::Db;
 
 #[non_exhaustive]
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
 pub enum AuthType {
     GitHub,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct User {
     pub auth_type: AuthType,
     pub user_id: i64,
     pub name: String,
     pub avatar_url: String,
     pub gravatar_id: String,
+}
+
+impl<'c> From<User> for Cookie<'c> {
+    fn from(user: User) -> Self {
+        let value = serde_json::to_string(&user).unwrap();
+        Cookie::build(("user", value))
+            .expires(OffsetDateTime::now_utc().saturating_add(4 * Duration::HOUR))
+            .http_only(true)
+            .same_site(SameSite::Lax)
+            .build()
+    }
 }
 
 impl User {
