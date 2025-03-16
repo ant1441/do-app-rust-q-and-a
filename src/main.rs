@@ -79,7 +79,7 @@ async fn run_migrations(rocket: rocket::Rocket<rocket::Build>) -> rocket::fairin
 
 #[launch]
 fn rocket() -> _ {
-    let url = env::var("PUBLIC_URL").unwrap_or("http://localhost:8000".to_string());
+    let url = env::var("PUBLIC_URL").unwrap_or("http://localhost:8000/".to_string());
     let database_url = env::var("DATABASE_URL").expect("Missing DATABASE_URL");
     let static_path = env::var("STATIC_PATH").unwrap_or("static".to_string());
 
@@ -94,7 +94,7 @@ fn rocket() -> _ {
             "oauth.github.client_secret",
             env::var("GITHUB_OAUTH_CLIENT_SECRET").expect("Expected GitHub Client Secret"),
         ))
-        .merge(("oauth.github.redirect_uri", format!("{url}/auth/github")));
+        .merge(("oauth.github.redirect_uri", format!("{url}auth/github")));
 
     let client = reqwest::ClientBuilder::new()
         .user_agent(APP_USER_AGENT)
