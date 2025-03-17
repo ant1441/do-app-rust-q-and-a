@@ -5,3 +5,7 @@ Rocket.toml
 
 *.db
 .env
+
+node_modules/
+package.json
+package-lock.json

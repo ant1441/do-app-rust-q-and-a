@@ -20,6 +20,13 @@ pub fn login() -> Redirect {
     Redirect::to("/auth/login/github")
 }
 
+#[get("/logout")]
+pub fn logout(cookies: &CookieJar<'_>) -> Redirect {
+    cookies.remove_private("user");
+
+    Redirect::to("/")
+}
+
 #[get("/login/github")]
 pub fn github_login(oauth2: OAuth2<GitHub>, cookies: &CookieJar<'_>) -> Redirect {
     oauth2.get_redirect(cookies, &["user:read"]).unwrap()

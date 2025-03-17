@@ -1,31 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Q & A</title>
-  <link rel="stylesheet" href="./static/style.css">
-  <link rel="icon" href="./favicon.ico" type="image/x-icon">
-</head>
-
-<body>
-  <header>
-    <nav class="title-nav">
-      <h1>Q & A</h1>
-      {% if not is_auth %}
-      <a href="/auth/login">Login</a>
-      {% endif %}
-    </nav>
-  </header>
-  <main>
-    {% if is_auth %}
-    <span>{{ user.name }}</span>
-    <img src="{{ user.avatar_url }}" />
-    {% endif %}
-  </main>
-  <!-- <script src="index.js"></script> -->
-</body>
-
-</html>
+{% extends "base" %}
+{% block main %}
+<div class="flex flex-col bg-blue-900">
+  <div>
+    <div id="topic" class="bg-amber-500">
+      Topic!
+    </div>
+    <div id="ask-a-question">
+      <label for="question">Ask a question</label>
+      <input type="text" id="question" />
+    </div>
+  </div>
+  <div class="flex">
+    <div>
+      <h3>Top questions</h3>
+    </div>
+    <div class="ml-auto">
+      <h3>New questions</h3>
+    </div>
+  </div>
+  {% if is_auth %}
+  <span>{{ user.name }}</span>
+  <img src="{{ user.avatar_url }}" size="32" width="32" />
+  {% endif %}
+</div>
+{% endblock %}

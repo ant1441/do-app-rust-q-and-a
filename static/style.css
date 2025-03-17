@@ -1,7 +1,12 @@
-:root {
-    color-scheme: light dark;
-}
+@import 'tailwindcss';
 
-.title-nav {
-    display: flex;
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --color-theme-primary: #312F2F;
+    --color-theme-secondary: #DA5D2B;
+    --color-theme-3: #84DCCF;
+
+    --color-theme-4: #A6D9F7;
+    --color-theme-5: #BCCCE0;
 }

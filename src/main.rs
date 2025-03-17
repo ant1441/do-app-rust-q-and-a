@@ -113,7 +113,12 @@ fn rocket() -> _ {
         .mount("/", routes![index])
         .mount(
             "/auth",
-            routes![auth::login, auth::github_login, auth::github_callback],
+            routes![
+                auth::login,
+                auth::logout,
+                auth::github_login,
+                auth::github_callback
+            ],
         )
         .mount("/static/", FileServer::from(static_path))
         .mount("/metrics", prometheus)
