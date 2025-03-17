@@ -36,3 +36,15 @@ function toggleUserMenu() {
   const userMenu = document.getElementById("user-menu");
   userMenu.classList.toggle("hidden");
 }
+
+window.addEventListener("DOMContentLoaded", function () {
+  document
+    .getElementById("set-light-theme")
+    .addEventListener("click", setLightTheme);
+  document
+    .getElementById("set-dark-theme")
+    .addEventListener("click", setDarkTheme);
+  document
+    .getElementById("set-system-theme")
+    .addEventListener("click", setSystemTheme);
+});

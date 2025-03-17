@@ -656,6 +656,9 @@
   .animate-none {
     animation: none;
   }
+  .cursor-pointer {
+    cursor: pointer;
+  }
   .touch-pinch-zoom {
     --tw-pinch-zoom: pinch-zoom;
     touch-action: var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,);
@@ -920,6 +923,15 @@
   }
   .justify-items-stretch {
     justify-items: stretch;
+  }
+  .gap-1 {
+    gap: calc(var(--spacing) * 1);
+  }
+  .gap-1\.5 {
+    gap: calc(var(--spacing) * 1.5);
+  }
+  .gap-2 {
+    gap: calc(var(--spacing) * 2);
   }
   .space-y-reverse {
     :where(& > :not(:last-child)) {
@@ -2067,6 +2079,21 @@
       justify-content: flex-start;
     }
   }
+  .sm\:p-2 {
+    @media (width >= 40rem) {
+      padding: calc(var(--spacing) * 2);
+    }
+  }
+  .sm\:p-5 {
+    @media (width >= 40rem) {
+      padding: calc(var(--spacing) * 5);
+    }
+  }
+  .sm\:px-2 {
+    @media (width >= 40rem) {
+      padding-inline: calc(var(--spacing) * 2);
+    }
+  }
   .sm\:px-5 {
     @media (width >= 40rem) {
       padding-inline: calc(var(--spacing) * 5);
@@ -2075,6 +2102,16 @@
   .sm\:px-6 {
     @media (width >= 40rem) {
       padding-inline: calc(var(--spacing) * 6);
+    }
+  }
+  .sm\:py-2 {
+    @media (width >= 40rem) {
+      padding-block: calc(var(--spacing) * 2);
+    }
+  }
+  .sm\:py-5 {
+    @media (width >= 40rem) {
+      padding-block: calc(var(--spacing) * 5);
     }
   }
   .sm\:pr-0 {
@@ -2090,6 +2127,11 @@
   .dark\:bg-gray-800 {
     &:where(.dark, .dark *) {
       background-color: var(--color-gray-800);
+    }
+  }
+  .dark\:bg-gray-900 {
+    &:where(.dark, .dark *) {
+      background-color: var(--color-gray-900);
     }
   }
   .dark\:text-gray-300 {

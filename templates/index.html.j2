@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 {% extends "base" %}
 {% block main %}
-<div class="flex flex-col bg-blue-900">
-  <div>
-    <div id="topic" class="bg-amber-500">
-      Topic!
-    </div>
-    <div id="ask-a-question">
-      <label for="question">Ask a question</label>
-      <input type="text" id="question" />
+<div class="sm:px-2">
+  <div class="flex flex-col bg-blue-900">
+    <div class="p-2">
+      <div>
+        <div id="topic" class="bg-amber-500">
+          Topic!
+        </div>
+        <div id="ask-a-question">
+          <label for="question">Ask a question</label>
+          <input type="text" id="question" />
+        </div>
+      </div>
+      <div class="flex">
+        <div>
+          <h3>Top questions</h3>
+        </div>
+        <div class="ml-auto">
+          <h3>New questions</h3>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="flex">
-    <div>
-      <h3>Top questions</h3>
-    </div>
-    <div class="ml-auto">
-      <h3>New questions</h3>
-    </div>
-  </div>
-  {% if is_auth %}
-  <span>{{ user.name }}</span>
-  <img src="{{ user.avatar_url }}" size="32" width="32" />
-  {% endif %}
 </div>
 {% endblock %}
