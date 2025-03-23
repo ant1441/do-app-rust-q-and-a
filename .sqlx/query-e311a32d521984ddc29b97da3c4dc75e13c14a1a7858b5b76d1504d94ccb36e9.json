@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO topics (title, created_by)\n        VALUES ($1, $2)\n        ON CONFLICT (id) DO UPDATE\n        SET\n            title = EXCLUDED.title,\n            created_at = NOW();\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "e311a32d521984ddc29b97da3c4dc75e13c14a1a7858b5b76d1504d94ccb36e9"
+}

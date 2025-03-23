@@ -5,16 +5,17 @@ use std::time::Duration;
 use std::{env, net::SocketAddr};
 
 use auth::GitHub;
-use models::User;
+use models::{User, get_topic};
 use rocket::fs::FileServer;
 use rocket::http::CookieJar;
 use rocket::request::{self, FromRequest};
 use rocket::{Request, fairing::AdHoc};
-use rocket_db_pools::{Database, sqlx};
+use rocket_db_pools::{Connection, Database, sqlx};
 use rocket_dyn_templates::{Template, context};
 use rocket_oauth2::OAuth2;
 use rocket_prometheus::PrometheusMetrics;
 
+mod api;
 mod auth;
 mod db;
 mod models;
@@ -40,11 +41,7 @@ impl<'r> FromRequest<'r> for RequestSocketAddr {
 }
 
 #[get("/")]
-fn index(cookies: &CookieJar<'_>) -> Template {
-    for c in cookies.iter() {
-        let name = c.name();
-        println!("COOKIE: {name}");
-    }
+async fn index(cookies: &CookieJar<'_>, db: Connection<Db>) -> Template {
     let user = if let Some(cookie) = cookies.get_private("user") {
         let cookie_value = cookie.value();
         match serde_json::from_str::<User>(cookie_value) {
@@ -60,14 +57,29 @@ fn index(cookies: &CookieJar<'_>) -> Template {
         None
     };
 
+    let is_admin = user.as_ref().map_or(false, User::is_admin);
+
     let is_auth = user.is_some();
-    Template::render("index", context! {is_auth: is_auth, user: user})
+    let topic = match get_topic(db).await {
+        Ok(topic) => topic,
+        Err(e) => {
+            warn!("Failed to load topic: {e}");
+            "Failed to load topic!".to_string().into()
+        }
+    };
+    Template::render(
+        "index",
+        context! {is_auth: is_auth, is_admin: is_admin, user: user, topic: topic},
+    )
 }
 
 async fn run_migrations(rocket: rocket::Rocket<rocket::Build>) -> rocket::fairing::Result {
     match Db::fetch(&rocket) {
         Some(db) => match sqlx::migrate!().run(&**db).await {
-            Ok(_) => Ok(rocket),
+            Ok(_) => {
+                info!("DB Migrations ran!");
+                Ok(rocket)
+            }
             Err(e) => {
                 error!("Failed to initialize SQLx database: {}", e);
                 Err(rocket)
@@ -120,6 +132,7 @@ fn rocket() -> _ {
                 auth::github_callback
             ],
         )
+        .mount("/api", routes![api::set_topic])
         .mount("/static/", FileServer::from(static_path))
         .mount("/metrics", prometheus)
 }

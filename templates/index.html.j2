@@ -5,8 +5,26 @@
   <div class="flex flex-col bg-blue-900">
     <div class="p-2">
       <div>
-        <div id="topic" class="bg-amber-500">
-          Topic!
+        <div id="topic">
+          {% if topic is none %}
+          {% if is_admin %}
+          <form id="submit-topic" class="w-full max-w-sm">
+            <div class="flex items-center border-b bg-blue-700 border-gray-900 py-2 pr-3">
+              <input type="text" value="" name="topic" autocomplete="off" autofocus placeholder="Topic"
+                aria-label="Topic"
+                class="appearance-none bg-transparent border-none w-full mr-3 py-1 px-2 leading-tight focus:outline-none">
+              <button type="submit"
+                class="flex-shrink-0 bg-gray-900 hover:bg-gray-700 border-gray-900 hover:border-gray-700 text-sm border-4 text-white py-1 px-2 rounded">
+                Update Topic
+              </button>
+            </div>
+          </form>
+          {% else %}
+          No Topic currently set
+          {% endif %}
+          {% else %}
+          Topic: {{ topic }}
+          {% endif %}
         </div>
         <div id="ask-a-question">
           <label for="question">Ask a question</label>

@@ -1,0 +1,12 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE topics SET cleared_at = NOW() WHERE cleared_at IS NULL;",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": []
+  },
+  "hash": "e4ba5a083d39ad804b98b664d17966ec4df98e64ccbeac8f80689a2d4c639088"
+}

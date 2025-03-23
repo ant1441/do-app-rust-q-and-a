@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO users (auth_type, user_id, name, avatar_url, gravatar_id)\n            VALUES ($1, $2, $3, $4, $5)\n            ON CONFLICT (auth_type, user_id) DO UPDATE\n            SET\n                name = EXCLUDED.name,\n                avatar_url = EXCLUDED.avatar_url,\n                gravatar_id = EXCLUDED.gravatar_id;\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Int8",
+        "Varchar",
+        "Text",
+        "Varchar"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "80f37d4d70c7a290e23dc846b8b388594690bf76c4c0f6a15dbb737bdd4aa265"
+}
